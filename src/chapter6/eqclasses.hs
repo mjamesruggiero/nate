@@ -37,8 +37,14 @@ instance Read Color where
         -- and the desired return value. tryParse will try to match
         -- the input to one of these strings
         tryParse [("Red", Red), ("Green", Green), ("Blue", Blue)]
-        where tryParse [] = []
+        where tryParse [] = [] -- if there's nothing left to try, dail
               tryParse ((attempt, result):xs) = 
+                -- compare the start of the string to be parsed
+                -- to the text we're looking for
                 if  (take (length attempt) value) == attempt
+                    -- if we have a match, return the result
+                    -- and remaining input
                     then [(result, drop (length attempt) value)]
+                    -- if we don't have a match, try the next pair
+                    -- in the list
                     else tryParse xs
