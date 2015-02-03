@@ -1,0 +1,8 @@
+THis is chapter 7/input.txt
+
+Test Input
+I like Haskell
+Haskell is great
+I/O is fun
+
+123456789
