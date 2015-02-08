@@ -18,7 +18,7 @@ printitall = runall actions
 
 runall :: [IO ()] -> IO ()
 runall [] = return ()
-runall (firstelem:remainingelems) = 
+runall (firstelem:remainingelems) =
     do firstelem
        runall remainingelems
 
