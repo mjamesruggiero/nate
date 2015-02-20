@@ -33,3 +33,32 @@ getFileSize path = handle ((\_ -> return Nothing)::IOError -> IO (Maybe Integer)
             f h = do
                 size <- hFileSize h
                 return (Just size)
+
+type InfoP a = FilePath
+             -> Permissions   -- path to the directory
+             -> Maybe Integer -- permissions
+             -> UTCTime       -- file size (Nothing if not a file)
+             -> a             -- last modified
+
+sizeP:: InfoP Integer
+sizeP _ _ (Just size) _ = size
+sizeP _ _ Nothing _     = -1
+
+equalP :: (Eq a) => InfoP a -> a -> InfoP Bool
+equalP f k w x y z = f w x y z == k
+
+liftP :: (a -> b -> c) -> InfoP a -> b -> InfoP c
+liftP q f k w x y z = f w x y z `q` k
+
+greaterP, lesserP :: (Ord a) => InfoP a -> a -> InfoP Bool
+greaterP = liftP(>)
+lesserP  = liftP(<)
+
+simpleAndP :: InfoP Bool -> InfoP Bool -> InfoP Bool
+simpleAndP f g w x y z = g w x y z && g w x y z
+
+liftP2 :: (a -> b -> c) -> InfoP a -> InfoP b -> InfoP c
+liftP2 q f g w x y z = f w x y z `q` g w x y z
+
+andP = liftP2 (&&)
+orP  = liftP2 (||)
