@@ -71,3 +71,22 @@ liftP' q f k w x y z = f w x y z `q` constP k w x y z
 myTest path _ (Just size) _ =
     takeExtension path == ".cpp" && size > 131072
 myTest _ _ _ _ = False
+
+pathP :: InfoP FilePath
+pathP path _ _ _ = path
+
+liftPath :: (FilePath -> a) -> InfoP a
+liftPath f w _ _ _ = f w
+
+myTest2 = (liftPath takeExtension `equalP` ".cpp") `andP`
+          (sizeP `greaterP` 131072)
+
+(==?) = equalP
+(&&?) = andP
+(>?) = greaterP
+
+infix 4 ==?
+infix 3 &&?
+infix 4 >?
+
+myTest3 = (liftPath takeExtension ==? ".cpp") &&? (sizeP >? 131072)
