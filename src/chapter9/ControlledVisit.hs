@@ -1,3 +1,11 @@
+module ControlledVisit
+    (
+      Info(..)
+    , getInfo
+    , getUsefulContents
+    , isDirectory
+    ) where
+
 import Control.Monad (filterM, forM, liftM)
 import Data.Time.Clock (UTCTime(..))
 import System.Directory (Permissions(..), getDirectoryContents,
