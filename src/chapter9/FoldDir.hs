@@ -33,8 +33,8 @@ foldTree iter initSeed path = do
                 | otherwise -> walk seed' names
     walk seed _ = return (Continue seed)
 
-
 atMostThreePictures :: Iterator [FilePath]
+
 atMostThreePictures paths info
         | length paths == 3
           = Done paths
@@ -46,5 +46,3 @@ atMostThreePictures paths info
           = Continue paths
     where extension = map toLower (takeExtension path)
           path = infoPath info
-
-
