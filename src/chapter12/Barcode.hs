@@ -40,3 +40,40 @@ leftOddCodes = listToArray leftOddList
 leftEvenCodes = listToArray leftEvenList
 rightCodes = listToArray rightList
 parityCodes = listToArray parityList
+
+-- strict left fild, similar to foldl' on lists
+foldA :: Ix k => (a -> b -> a) -> a -> Array k b -> a
+foldA f s a = go s (indices a)
+  where go s (j:js) = let s' = f s (a ! j)
+                      in s' `seq` go s' js
+        go s _ = s
+
+-- strict fold using the first element of the array
+-- as its starting value, similar to foldl1 on lists
+foldA1 :: Ix k => (a -> a -> a) -> Array k a -> a
+foldA1 f a = foldA f (a ! fst (bounds a)) a
+
+encodeEAN13 :: String -> String
+encodeEAN13 = concat . encodeDigits . map digitToInt
+
+-- computes the check digit; don't pass one in
+encodeDigits :: [Int] -> [String]
+encodeDigits s@(first:rest) =
+    outerGuard : lefties ++ centerGuard : righties ++ [outerGuard]
+  where (left, right) = splitAt 4 rest
+        lefties = zipWith leftEncode (parityCodes ! first) left
+        righties = map rightEncode (right ++ [checkDigit s])
+
+leftEncode :: Char -> Int -> String
+leftEncode '1' = (leftOddCodes !)
+leftEncode '0' = (leftEvenCodes !)
+
+rightEncode :: Int -> String
+rightEncode = (rightCodes !)
+
+outerGuard = "101"
+centerGuard = "01010"
+
+type Pixel = Word8
+type RGB = (Pixel, Pixel, Pixel)
+type Pixmap = Array(Int, Int) RGB
